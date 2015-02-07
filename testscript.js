@@ -148,7 +148,7 @@ function processData(data, accum, callback) {
 
 function getWiki(topic, data, callback, accum, callback2) {
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&exsentences=3&titles="+encodeURI(topic)+"&format=json&callback=?", true);
+  xhr.open("GET", "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&redirects&exsentences=3&titles="+encodeURI(topic)+"&format=json&callback=?", true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.setRequestHeader("Accept", "application/json");
   xhr.onreadystatechange = function() {
@@ -163,7 +163,7 @@ function getWiki(topic, data, callback, accum, callback2) {
 	thing2 = thing[key].extract;
       }
       if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
-	callback(data, accum+thing2+"<br /><br />", callback2);
+	callback(data, accum+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a><br /><br />", callback2);
       } else {
 	callback(data, accum, callback2);
       }
