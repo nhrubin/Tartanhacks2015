@@ -1,6 +1,7 @@
 $(document).ready(function() {
   var replaceHTML = "<div>Hiabcde</div>";
   $("#watch-discussion").replaceWith(replaceHTML);
+  $(".Contributions").replaceWith("");
   first = true;
   $("div").each(function() {
     var regex = /(comment|disqus)+/i;
