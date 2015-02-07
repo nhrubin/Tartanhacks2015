@@ -24,6 +24,8 @@ function setContent(source, input) {
     twitterContent(input, replaceContents);
   } else if (contentToUse == 'cats') {
     catContent(replaceContents);
+  } else if (contentToUse == 'fbpics') {
+	popFBPicsContent(replaceContents);
   }
 }
 
@@ -294,6 +296,7 @@ function getWiki(topic, data, callback, accum, callback2) {
   xhr.send();
 }
 
+//twitter start
 function twitterContent(handle, callback){
   if (handle.substring(0,1) === '@'){
     handle = handle.substring(1,handle.length);
@@ -309,6 +312,33 @@ function twitterContent(handle, callback){
       var tweets = response.substring(tweetsStart, tweetsEnd);
       tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>NoComment: Tweets</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
       callback(tweetText);
+    }
+  }
+  xhr.send();
+}
+//end twitter
+
+function popFBPicsContent(callback){
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://viralfacebookimages.p.mashape.com/dl?likesplus:1000&trendcat:fun&trendimageage:2", true);
+  xhr.setRequestHeader("X-Mashape-Key", "12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u")
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+  xhr.setRequestHeader("Accept", "application/json")
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      // innerText does not let the attacker inject HTML elements.
+	  var text = textPrefix;
+	  text += '<div id="commentReplacementHeader"><p>NoComment: Popular Facbook Pics</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+      text += '<ul id="commentfillerphotolist">';
+      var response = xhr.responseText;
+	  var json = JSON.parse(response);
+	  for (i=0; i<json.length; i++){
+		  var picObject = json[i];
+		  var pic = picObject["src_big"];
+          text += '<li><img src=' + pic + ' alt=""></li>';
+      }
+      text += '</ul></div></div>';
+      callback(text);
     }
   }
   xhr.send();
