@@ -19,8 +19,8 @@ function setContent(source, input) {
   } else if (contentToUse == 'quotes') {
     quotesContent(replaceContents);
   } else if (contentToUse == 'flickr') {
-    if (input == null || input = '') {
-      flickrContent("cats, kittens", replaceContents)
+    if (input == null || input == '') {
+      flickrContent("cats, kittens", replaceContents);
     } else {
       flickrContent(input, replaceContents);
     }
