@@ -239,7 +239,9 @@ function createPhotoList(responseArray, callback) {
     var photo = photosArray[i];
     var imgSrc = 'https://farm' + photo.farm + '.staticflickr.com/' + photo.server
       + '/' + photo.id + '_' + photo.secret + '.jpg';
-    text += '<li><img src=' + imgSrc + ' alt=""></li>';
+    var link = 'https://www.flickr.com/photos/' + photo.owner + '/' + photo.id;
+    text += '<li><a href=' + link + " target='_blank'><img src=" + imgSrc + ' alt="">';
+    text += "</a></li>";
   }
   text += '</ul></div></div>';
   callback(text);
