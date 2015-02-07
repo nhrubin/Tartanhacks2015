@@ -1,3 +1,3 @@
 $(document).ready(function() {
-  console.log('in this function :)');
+  $("#watch-discussion").replaceWith("<div>Hi</div>");
 });
