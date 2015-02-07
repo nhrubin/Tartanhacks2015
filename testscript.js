@@ -1,11 +1,28 @@
 $(document).ready(function() {
-  contentToUse = 'wiki';
+  console.log('here');
+  getOptions(setContent);
+});
+
+function setContent(source, input) {
+  contentToUse = source;
   if (contentToUse == 'wiki') {
     wikiContent(replaceContents);
-  } else if (contentToUse == 'facts') {
+  } else if (contentToUse == 'fun_facts') {
     factsContent(replaceContents);
   }
-});
+}
+
+function getOptions(callback) {
+  // Default selection: twitter account @AvoidComments
+  chrome.storage.sync.get({
+    source: 'twitter',
+    input: '@AvoidComments'
+  }, function(items) {
+    var source = items.source;
+    var input = items.input;
+    callback(source, input);
+  });
+}
 
 function replaceContents(newContents) {
   $("#watch-discussion").replaceWith(newContents);
