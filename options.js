@@ -9,21 +9,20 @@
       source: source,
       input : input
     }, function() {
-    // Update status to let user know options were saved.
-    var status = document.getElementById('status');
-    status.textContent = 'Options saved.';
-    setTimeout(function() {
-      status.textContent = '';
-    }, 750);
-  });
+      // Send message to testscript.js
+      chrome.runtime.sendMessage({source: "test"});
+      console.log("sent");
+      // Close pop-up window
+      window.close();
+    });
   }
 
 // Restores values using the preferences stored in chrome.storage.
 function restoreOptions() {
-  // Default selection: twitter account @AvoidComments
+  // Default selection: twitter account @OfficialJaden
   chrome.storage.sync.get({
     source: 'twitter',
-    input: '@AvoidComments'
+    input: '@OfficialJaden'
   }, function(items) {
     var source = items.source;
     var input = items.input;

@@ -1,6 +1,14 @@
 $(document).ready(function() {
   getOptions(setContent);
+  console.log("here");
+  chrome.runtime.onMessage.addListener(optionsChange);
+  console.log("after");
+  
 });
+
+function optionsChange(message, sender, sendResponse) {
+  console.log("iduhfd");
+}
 
 function setContent(source, input) {
   contentToUse = source;
@@ -20,10 +28,10 @@ function setContent(source, input) {
 }
 
 function getOptions(callback) {
-  // Default selection: twitter account @AvoidComments
+  // Default selection: twitter account @OfficialJaden
   chrome.storage.sync.get({
     source: 'twitter',
-    input: '@AvoidComments'
+    input: '@OfficialJaden'
   }, function(items) {
     var source = items.source;
     var input = items.input;
