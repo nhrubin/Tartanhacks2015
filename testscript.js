@@ -9,11 +9,11 @@ $(document).ready(function() {
 });
 
 function replaceContents(newContents) {
-  console.log("-->"+newContents+"<--");
   $("#watch-discussion").replaceWith(newContents);
   $(".Contributions").replaceWith("");
   first = true;
   $("div").each(function() {
+    console.log("looking for things to replace");
     var regex = /(comment|disqus)+/i;
     if (this.id.match(regex) || this.className.match(regex)) {
       if($(this).length > 0) {
@@ -23,9 +23,6 @@ function replaceContents(newContents) {
 	} else {
 	  $(this).replaceWith("");
 	}
-	console.log('matches: '+this.id+" "+this.className);
-      } else {
-	console.log('here');
       }
     }
   });
@@ -45,11 +42,14 @@ function factsContent(callback) {
 }
 
 function wikiContent(callback) {
-  console.log('getting wiki content');
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://access.alchemyapi.com/calls/url/URLGetRankedNamedEntities?apikey=f9c7e68cc2f1b2f6725cb90dfeabb313288c3dff&url=https://en.wikipedia.org/wiki/Main_Page&outputMode=json&maxRetrieve=10", true);
+  var curUrl = window.location.href;
+  console.log(curUrl);
+  xhr.open("GET", "https://access.alchemyapi.com/calls/url/URLGetRankedNamedEntities?apikey=f9c7e68cc2f1b2f6725cb90dfeabb313288c3dff&url="+curUrl+"&outputMode=json&maxRetrieve=10", true);
   xhr.onreadystatechange = function() {
-    intermediate(jQuery.parseJSON(xhr.responseText), callback);
+    if (xhr.readyState == 4) {
+      intermediate(jQuery.parseJSON(xhr.responseText), callback);
+    }
   }
   xhr.send();
 }
@@ -59,34 +59,32 @@ function intermediate(data, callback) {
 }
 
 function processData(data, accum, callback) {
-  console.log("VVV");
-  console.log(data);
-  if (data.length == 0) callback(accum);
+  if (data.length == 0) {
+    callback(accum);
+    return;
+  }
   el = data[0];
   data.splice(0,1);
   getWiki(el.text, data, processData, accum, callback);
 }
 
 function getWiki(topic, data, callback, accum, callback2) {
-  console.log("====="+topic);
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&exsentences=3&titles="+encodeURI(topic)+"&callback=?", true);
+  xhr.open("GET", "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&exsentences=3&titles="+encodeURI(topic)+"&format=json&callback=?", true);
   xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("Accept", "application/json");
   xhr.onreadystatechange = function() {
-    console.log('in here');
-    console.log(xhr);
-    console.log(xhr.responseText);
-    data = jQuery.parseXML(xhr.responseText);
-    console.log(data);
-    thing = data.query.pages;
-    for (var key in thing) {
-      thing2 = thing[key].extract;
-    }
-    console.log(thing2);
-    if (thing2.length > 50) {
-      callback(data, accum+thing2+"<br /><br />", callback2);
-    } else {
-      callback(data, accum, callback2);
+    if (xhr.readyState == 4) {
+      data2 = jQuery.parseJSON(xhr.responseText.substring(5, xhr.responseText.length-1));
+      thing = data2.query.pages;
+      for (var key in thing) {
+	thing2 = thing[key].extract;
+      }
+      if (thing2.length > 50) {
+	callback(data, accum+thing2+"<br /><br />", callback2);
+      } else {
+	callback(data, accum, callback2);
+      }
     }
   }
   xhr.send();
