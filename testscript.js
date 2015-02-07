@@ -19,7 +19,11 @@ function setContent(source, input) {
   } else if (contentToUse == 'quotes') {
     quotesContent(replaceContents);
   } else if (contentToUse == 'flickr') {
-    flickrContent(input, replaceContents);
+    if (input == null || input = '') {
+      flickrContent("cats, kittens", replaceContents)
+    } else {
+      flickrContent(input, replaceContents);
+    }
   } else if (contentToUse == 'twitter') {
     twitterContent(input, replaceContents);
   } else if (contentToUse == 'cats') {

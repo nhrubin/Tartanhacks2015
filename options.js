@@ -2,7 +2,7 @@
   function saveOptions() {
     var source = $("#buttons input:checked").val();
     var input = null;
-    if (source == 'twitter' || source == 'flickr' || source == 'instagram') {
+    if (source == 'twitter' || source == 'flickr') {
       input = $('input[name=' + source + '_input]').val();
     }
     chrome.storage.sync.set({
@@ -27,7 +27,7 @@ function restoreOptions() {
     var source = items.source;
     var input = items.input;
     $('input:radio[name="source"]').val([source]);
-    if (source == 'twitter' || source == 'flickr' || source == 'instagram') {
+    if (source == 'twitter' || source == 'flickr') {
       $('input[name=' + source + '_input]').val(input);
     }
   });
