@@ -1,5 +1,4 @@
 $(document).ready(function() {
-  console.log('here');
   getOptions(setContent);
 });
 
@@ -124,7 +123,7 @@ function factsContent(callback) {
 function wikiContent(callback) {
   var xhr = new XMLHttpRequest();
   var curUrl = window.location.href;
-  xhr.open("GET", "https://access.alchemyapi.com/calls/url/URLGetRankedNamedEntities?apikey=f9c7e68cc2f1b2f6725cb90dfeabb313288c3dff&url="+curUrl+"&outputMode=json&maxRetrieve=10", true);
+  xhr.open("GET", "https://access.alchemyapi.com/calls/url/URLGetRankedNamedEntities?apikey=f9c7e68cc2f1b2f6725cb90dfeabb313288c3dff&url="+curUrl+"&outputMode=json&maxRetrieve=20&sourceText=raw", true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
       intermediate(jQuery.parseJSON(xhr.responseText), callback);
@@ -157,10 +156,13 @@ function getWiki(topic, data, callback, accum, callback2) {
       data2 = jQuery.parseJSON(xhr.responseText.substring(5, xhr.responseText.length-1));
       thing = data2.query.pages;
       for (var key in thing) {
-	if (key < 0) callback(data, accum, callback2);
+	if (key < 0) {
+	  callback(data, accum, callback2);
+	  return;
+	}
 	thing2 = thing[key].extract;
       }
-      if (thing2.length > 50) {
+      if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
 	callback(data, accum+thing2+"<br /><br />", callback2);
       } else {
 	callback(data, accum, callback2);
