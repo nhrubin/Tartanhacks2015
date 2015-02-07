@@ -1,23 +1,62 @@
-// Saves options to chrome.storage
-function save_options() {
-  var text = $("#buttons input:checked").val();
-  console.log(text);
-  localStorage['text'] = text;
+  // Saves options to chrome.storage.sync.
+  function saveOptions() {
+    var source = $("#buttons input:checked").val();
+    var input = null;
+    if (source == 'twitter' || source == 'flickr' || source == 'instagram') {
+      input = $('input[name=' + source + '_input]').val();
+    }
+    chrome.storage.sync.set({
+      source: source,
+      input : input
+    }, function() {
+    // Update status to let user know options were saved.
+    var status = document.getElementById('status');
+    status.textContent = 'Options saved.';
+    setTimeout(function() {
+      status.textContent = '';
+    }, 750);
+  });
+  }
+
+// Restores values using the preferences stored in chrome.storage.
+function restoreOptions() {
+  // Default selection: twitter account @AvoidComments
+  chrome.storage.sync.get({
+    source: 'twitter',
+    input: '@AvoidComments'
+  }, function(items) {
+    var source = items.source;
+    var input = items.input;
+    $('input:radio[name="source"]').val([source]);
+    if (source == 'twitter' || source == 'flickr' || source == 'instagram') {
+      $('input[name=' + source + '_input]').val(input);
+    }
+  });
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
-function restore_options() {
-  // Use default value color = 'red' and likesColor = true.
-  /*chrome.storage.sync.get({
-    text: 'should not happen',
-  }, function(items) {
-    console.log("restoring "+text);
-  });*/
-  text = localStorage['text'];
-  console.log("loaded: "+text);
-  $('#buttons input[value="'+text+'"]').prop("checked", true);
+function misc() {
+  $("input[type=text]").click(function() {
+    var name = $(this).attr('name');
+    var source = name.split('_')
+    $('input:radio[name="source"]').val([source[0]]);
+  });
+
+  $("input[type=radio]").click(function(){
+      var source = $(this).attr('value');
+      $('input[name=' + source + '_input]').focus();
+  });
+
+  $("input[type=radio]").click(function(){
+   $("input[type=text]").val('');
+ }); 
+
+  $("input[type=text]").click(function() {
+    $("input[type=text]").val('');
+  });
 }
-document.addEventListener('DOMContentLoaded', restore_options);
+
+
+document.addEventListener('DOMContentLoaded', misc);
+document.addEventListener('DOMContentLoaded', restoreOptions);
 document.getElementById('save').addEventListener('click',
-    save_options);
+  saveOptions);

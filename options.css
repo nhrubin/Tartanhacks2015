@@ -1,0 +1,33 @@
+/***************************************
+GENERAL
+****************************************/
+body {
+	font-family: 'Open Sans', sans-serif;
+	padding: 0 5% 5% 5%;
+	margin: auto;
+}
+
+input[type="radio"]{
+	margin: 5px;
+}
+
+input[type="text"]{
+	margin-bottom: 5px;
+}
+/*
+#status{
+	margin: 0 auto;
+}
+*/
+
+
+
+/***************************************
+COLORS
+****************************************/
+
+/* site body */
+body {
+	background-color: #fff;
+	color: #000;
+}
