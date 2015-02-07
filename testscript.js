@@ -28,8 +28,6 @@ function setContent(source, input) {
     twitterContent(input, replaceContents);
   } else if (contentToUse == 'cats') {
     catContent(replaceContents);
-  } else if (contentToUse == 'fbpics') {
-	popFBPicsContent(replaceContents);
   }
 }
 
@@ -115,7 +113,7 @@ function AllResponses(resultArray,xhrArray,num,callback) {
   }
   if(isAllComplete) {
     var text = textPrefix;
-    text += '<div id="commentReplacementHeader"><p>NoComment: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    text += '<div id="commentReplacementHeader"><p>NoComment: Quotes</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">';
     for(i=0;i<resultArray.length;i++){
       if(xhrArray[i].status==200) {
        	text += resultArray[i];
@@ -142,7 +140,7 @@ function catContent(callback) {
       for (var i in facts) {
 	text = text + "<p>"+facts[i]+"</p><hr>";
       }
-      callback(textPrefix + '<div id="commentReplacementHeader"><p>NoComment: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + text + "</div></div>");
+      callback(textPrefix + '<div id="commentReplacementHeader"><p>NoComment: Cat Facts</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">' + text + "</div></div>");
     }
   }
   xhr.send();
@@ -190,7 +188,7 @@ function FactAllResponses(resultArray,xhrArray,num,callback) {
   }
   if(isAllComplete) {
     var text = textPrefix;
-    text += '<div id="commentReplacementHeader"><p>NoComment: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    text += '<div id="commentReplacementHeader"><p>NoComment: Facts</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">';
     for(i=0;i<resultArray.length;i++){
       if(xhrArray[i].status==200) {
        	text += resultArray[i];
@@ -232,7 +230,7 @@ function flickrContent(keyword, callback) {
 
 function createPhotoList(responseArray, callback) {
   var text = textPrefix;
-  text += '<div id="commentReplacementHeader"><p>NoComment: Flickr</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+  text += '<div id="commentReplacementHeader"><p>NoComment: Flickr</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">';
   var photosArray = responseArray.photos.photo;
   text += '<ul id="commentfillerphotolist">';
   for (i=0; i<photosArray.length;i++) {
@@ -267,7 +265,7 @@ function intermediate(data, callback) {
 
 function processData(data, accum, callback) {
   if (data.length == 0) {
-    text = textPrefix2 + '<div id="commentReplacementHeader"><p>NoComment: Wiki</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + accum + "</div></div>";
+    text = textPrefix2 + '<div id="commentReplacementHeader"><p>NoComment: Wiki</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">' + accum + "</div></div>";
     callback(text);
     return;
   }
@@ -316,7 +314,7 @@ function twitterContent(handle, callback){
       var tweetsStart = response.search('<div class="GridTimeline">');
       var tweetsEnd = response.search('<div id="scroll-bump-dialog" class="ScrollBumpDialog modal-container">');
       var tweets = response.substring(tweetsStart, tweetsEnd);
-      tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>NoComment: Tweets</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
+      tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>NoComment: Tweets</p></div><div id="commentreplacement">'+scrollCSS+'<div id="commentReplacementItems">'+tweets+'</div></div>';
       callback(tweetText);
     }
   }
@@ -324,54 +322,8 @@ function twitterContent(handle, callback){
 }
 //end twitter
 
-function popFBPicsContent(callback){
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://viralfacebookimages.p.mashape.com/dl?likesplus:1000&trendcat:fun&trendimageage:2", true);
-  xhr.setRequestHeader("X-Mashape-Key", "12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u")
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-  xhr.setRequestHeader("Accept", "application/json")
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      // innerText does not let the attacker inject HTML elements.
-	  var text = textPrefix;
-	  text += '<div id="commentReplacementHeader"><p>NoComment: Popular Facbook Pics</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
-      text += '<ul id="commentfillerphotolist">';
-      var response = xhr.responseText;
-	  var json = JSON.parse(response);
-	  for (i=0; i<json.length; i++){
-		  var picObject = json[i];
-		  var pic = picObject["src_big"];
-          text += '<li><img src=' + pic + ' alt=""></li>';
-      }
-      text += '</ul></div></div>';
-      callback(text);
-    }
-  }
-  xhr.send();
-}
+var scrollCSS = '<style type="text/css">::-webkit-scrollbar {width: 9px;height: 9px;}::-webkit-scrollbar-button {width: 0px;height: 0px;}::-webkit-scrollbar-thumb {background: #8a8a8a;border: 0px none #ffffff;border-radius: 50px;}::-webkit-scrollbar-thumb:hover {background: #aeaeae;}::-webkit-scrollbar-thumb:active {background: #494949;}::-webkit-scrollbar-track {background: #ffffff;border: 0px none #ffffff;border-radius: 50px;}::-webkit-scrollbar-track:hover {background: #ffffff;}::-webkit-scrollbar-track:active {background: #fffdff;}::-webkit-scrollbar-corner {background: transparent;}</style>';
 
-var textPrefix2 = '<style>@charset "utf-8";body {}'+
-  '#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
-  '#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;}'+
-  '#commentreplacement p p2 {font-weight: bold;}'+
-  '#commentreplacement p p3 {font-style: italic;}'+
-  '#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
-  '#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
-  '#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
-  '#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
-  '#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
-  '#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
-  '#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
+var textPrefix2 = '<style>@charset "utf-8";body {}#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;border-radius: 0px 10px 10px;border: 2px solid #606060;}#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;}#commentreplacement p p2 {font-weight: bold;}#commentreplacement p p3 {font-style: italic;}#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: small;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #606060;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-width: thin;}#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
 
-var textPrefix = '<style>@charset "utf-8";body {}'+
-  '#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
-  '#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;text-align: center;}'+
-  '#commentreplacement p p2 {font-weight: bold;}'+
-  '#commentreplacement p p3 {font-style: italic;}'+
-  '#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
-  '#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
-  '#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
-  '#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
-  '#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
-  '#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
-  '#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
+var textPrefix = '<style>@charset "utf-8";body {}#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;border-radius: 0px 10px 10px;border: 2px solid #606060;}#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;text-align: center;}#commentreplacement p p2 {font-weight: bold;}#commentreplacement p p3 {font-style: italic;}#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: small;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #606060;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-width: thin;}#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';

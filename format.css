@@ -2,7 +2,14 @@
 body {
 }
 
-#commentreplacement {width: 100%;overflow: scroll;max-height: 400px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}
+#commentreplacement {
+	width: 100%;
+	overflow: scroll;
+	max-height: 600px;
+	background-color: #FFFFFF;
+	border-radius: 0px 10px 10px;
+	border: 2px solid #606060;
+}
 
 #commentreplacement p {
 	border-bottom-color: #A3A3A3;
@@ -24,7 +31,26 @@ body {
 
 #commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}
 
-#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}
+#commentReplacementHeader p {
+	background-color: #FFFFFF;
+	width: 30%;
+	height: 100%;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	line-height: 300%;
+	font-weight: bold;
+	font-size: medium;
+	text-align: center;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-color: #606060;
+	border-left-style: solid;
+	border-right-style: solid;
+	border-top-style: solid;
+	border-width: thin;
+}
 
 #commentfillerphotolist {margin: 0;padding: 0;list-style: none;}
 
