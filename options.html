@@ -3,20 +3,34 @@
 <head>
   <title>My Test Extension Options</title>
   <script src="jquery-2.1.1.min.js"></script>
+  <link rel="stylesheet" href="options.css">
 </head>
 <body>
 
-Text to show:
-<form action="">
-  <div id="buttons">
-    <input type="radio" name="text" value=":)" checked="checked">:)<br>
-    <input type="radio" name="text" value=":(">:(
+  <h2>Replace comments with:</h2>
+  <form action="">
+    <div id="buttons">
+      <input type="radio" name="source" value="twitter" id = "twitter" checked="checked">
+      <label for="twitter">Twitter: </label>
+        <input type="text" name="twitter_input" placeholder="@AvoidComments"><br>
+      <input type="radio" name="source" value="flickr" id = "flickr">
+      <label for="flickr">Flickr: </label>
+        <input type="text" name="flickr_input" placeholder="Search term (leave blank for random photos)" size="45"><br>
+      <input type="radio" name="source" value="instagram" id="instagram">
+      <label for="instagram">Instagram: </label>
+        <input type="text" name="instagram_input" placeholder="Hashtag (leave blank for random photos)" size = "45"><br>
+      <input type="radio" name="source" value="fun_facts" id="fun_facts">
+      <label for="fun_facts">Fun facts </label><br>
+      <input type="radio" name="source" value="wiki" id="wiki">
+      <label for="wiki">Semi-relevant wiki articles</label><br>
+    </div>
+  </form>
+
+  <div id="status"></div>
+  <div>
+  <button id="save">Save</button>
   </div>
-</form>
 
-<div id="status"></div>
-<button id="save">Save</button>
-
-<script src="options.js"></script>
+  <script src="options.js"></script>
 </body>
 </html>
