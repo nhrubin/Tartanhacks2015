@@ -4,7 +4,17 @@ body {
 
 #commentreplacement {width: 100%;overflow: scroll;max-height: 400px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}
 
-#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}
+#commentreplacement p {
+	border-bottom-color: #A3A3A3;
+	border-top-color: #A3A3A3;
+	padding-left: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	font-size: medium;
+	text-align: center;
+}
 
 #commentreplacement p p2 {font-weight: bold;}
 

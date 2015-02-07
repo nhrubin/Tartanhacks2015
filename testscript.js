@@ -12,6 +12,8 @@ function setContent(source, input) {
     quotesContent(replaceContents);
   } else if (contentToUse == 'flickr') {
     flickrContent(input, replaceContents);
+  } else if (contentToUse == 'twitter') {
+	twitterContent(input, replaceContents);
   }
 }
 
@@ -103,7 +105,7 @@ function AllResponses(resultArray,xhrArray,num,callback) {
        		text += resultArray[i];
 		 }
 		 else{
-			text += "<p>"+statusText+"</p>";
+			text += "<p>"+statusText+"</p><hr>";
 		 }
      }
 	 text += "</div></div>";
@@ -159,7 +161,7 @@ function FactAllResponses(resultArray,xhrArray,num,callback) {
        		text += resultArray[i];
 		 }
 		 else{
-			text += "<p>"+statusText+"</p>";
+			text += "<p>"+statusText+"</p><hr>";
 		 }
      }
 	 text += "</div></div>";
@@ -263,9 +265,40 @@ function getWiki(topic, data, callback, accum, callback2) {
  xhr.send();
 }
 
-var textPrefix = '<style>@charset "utf-8";body {}'+
+function twitterContent(handle, callback){
+	if (handle.substring(0,1) === '@'){
+		handle = handle.substring(1,handle.length);
+	}
+	var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://www.twitter.com/"+handle, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        // innerText does not let the attacker inject HTML elements.
+		var response = xhr.responseText;
+		var tweetsStart = response.search('<div class="GridTimeline">');
+		var tweetsEnd = response.search('<div id="scroll-bump-dialog" class="ScrollBumpDialog modal-container">');
+		var tweets = response.substring(tweetsStart, tweetsEnd);
+        tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css"><style>@charset "utf-8";body {}'+
 '#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
 '#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}'+
+'#commentreplacement p p2 {font-weight: bold;}'+
+'#commentreplacement p p3 {font-style: italic;}'+
+'#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
+'#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
+'#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
+'#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
+'#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
+'#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
+'#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>'+'<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
+		callback(tweetText);
+      }
+  }
+  xhr.send();
+}
+
+var textPrefix = '<style>@charset "utf-8";body {}'+
+'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
+'#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 200%;text-align: center;}'+
 '#commentreplacement p p2 {font-weight: bold;}'+
 '#commentreplacement p p3 {font-style: italic;}'+
 '#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
