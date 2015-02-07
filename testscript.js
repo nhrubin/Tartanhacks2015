@@ -13,7 +13,9 @@ function setContent(source, input) {
   } else if (contentToUse == 'flickr') {
     flickrContent(input, replaceContents);
   } else if (contentToUse == 'twitter') {
-	twitterContent(input, replaceContents);
+    twitterContent(input, replaceContents);
+  } else if (contentToUse == 'cats') {
+    catContent(replaceContents);
   }
 }
 
@@ -37,136 +39,155 @@ function replaceContents(newContents) {
     var regex = /(comment|disqus)+/i;
     if (this.id.match(regex) || this.className.match(regex)) {
       if($(this).length > 0) {
-       if (first) {
-         first = false;
-         $(this).replaceWith(newContents);
-       } else {
-         $(this).replaceWith("");
-       }
-     }
-   }
- });
+	if (first) {
+          first = false;
+          $(this).replaceWith(newContents);
+	} else {
+          $(this).replaceWith("");
+	}
+      }
+    }
+  });
 }
 
 //quotes
 function quotesContent(callback) {
-  	var xhrArray=[];
-    var resultArray=[];
-	var numQuotes = 20;
+  var xhrArray=[];
+  var resultArray=[];
+  var numQuotes = 20;
 
-    var statechange=function(arrIndex) {
-      return function() {
-        if(xhrArray[arrIndex].readyState===4) {
-          ItemResponse(arrIndex,resultArray,xhrArray);
-          AllResponses(resultArray,xhrArray,numQuotes,callback);
-        }
+  var statechange=function(arrIndex) {
+    return function() {
+      if(xhrArray[arrIndex].readyState===4) {
+        ItemResponse(arrIndex,resultArray,xhrArray);
+        AllResponses(resultArray,xhrArray,numQuotes,callback);
       }
     }
+  }
 
-    for(var i=0; i<numQuotes; i++) {
-	  var xhr = new XMLHttpRequest();
-      xhrArray[i]=xhr;
-      xhr.open("POST", "https://andruxnet-random-famous-quotes.p.mashape.com/cat=movies", true);
-	  xhr.setRequestHeader("X-Mashape-Key", "12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
-	  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	  xhr.setRequestHeader("Accept", "application/json");
-      xhrArray[i].onreadystatechange=statechange(i);
-      xhrArray[i].send();
-    }
+  for(var i=0; i<numQuotes; i++) {
+    var xhr = new XMLHttpRequest();
+    xhrArray[i]=xhr;
+    xhr.open("POST", "https://andruxnet-random-famous-quotes.p.mashape.com/cat=movies", true);
+    xhr.setRequestHeader("X-Mashape-Key", "12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("Accept", "application/json");
+    xhrArray[i].onreadystatechange=statechange(i);
+    xhrArray[i].send();
+  }
 }
 
 function ItemResponse(idx,resultArray,xhrArray) {
   if(xhrArray[idx].status===200) {
-	    var xhr = xhrArray[idx];
-        json = JSON.parse(xhr.responseText);
-		var author = json["author"];
-		var quote = json["quote"];
-		var category = json["category"]; //Movies or Famous
-		if(category.localeCompare("Movies")==0){
-			resultArray[idx] = '<p>"'+quote+'" -<p3>'+author+'</p3></p><hr>';
-		}
-		else{
-			resultArray[idx] = '<p>"'+quote+'" -<p2>'+author+'</p2></p><hr>';
-		}
-   }
+    var xhr = xhrArray[idx];
+    json = JSON.parse(xhr.responseText);
+    var author = json["author"];
+    var quote = json["quote"];
+    var category = json["category"]; //Movies or Famous
+    if(category.localeCompare("Movies")==0){
+      resultArray[idx] = '<p>"'+quote+'" -<p3>'+author+'</p3></p><hr>';
+    }
+    else{
+      resultArray[idx] = '<p>"'+quote+'" -<p2>'+author+'</p2></p><hr>';
+    }
+  }
 }
 
 function AllResponses(resultArray,xhrArray,num,callback) {
   var i,isAllComplete=true,isAllCompleteSucc=true;
-   for(i=0;i<num;i++) if((!xhrArray[i])||(xhrArray[i].readyState!==4)) {
-     isAllComplete=false;
-     break;
-   }
-   if(isAllComplete) {
-	 var text = textPrefix;
-   	 text += '<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
-     for(i=0;i<resultArray.length;i++){
-		 if(xhrArray[i].status==200) {
-       		text += resultArray[i];
-		 }
-		 else{
-			text += "<p>"+statusText+"</p><hr>";
-		 }
-     }
-	 text += "</div></div>";
-     callback(text);
-   }
+  for(i=0;i<num;i++) if((!xhrArray[i])||(xhrArray[i].readyState!==4)) {
+    isAllComplete=false;
+    break;
+  }
+  if(isAllComplete) {
+    var text = textPrefix;
+    text += '<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    for(i=0;i<resultArray.length;i++){
+      if(xhrArray[i].status==200) {
+       	text += resultArray[i];
+      }
+      else{
+	text += "<p>"+statusText+"</p><hr>";
+      }
+    }
+    text += "</div></div>";
+    callback(text);
+  }
 }
 //end quotes
 
+//cats start
+function catContent(callback) {
+  var numFacts = 20;
+  text = "";
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://catfacts-api.appspot.com/api/facts?number="+numFacts, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      var facts = jQuery.parseJSON(xhr.responseText).facts;
+      for (var i in facts) {
+	text = text + "<p>"+facts[i]+"</p><hr>";
+      }
+      callback(textPrefix + '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + text + "</div></div>");
+    }
+  }
+  xhr.send();
+}
+//end cats
+
 //facts start
 function factsContent(callback) {
-  	var xhrArray=[];
-    var resultArray=[];
-	var numQuotes = 20;
+  var xhrArray=[];
+  var resultArray=[];
+  var numQuotes = 20;
 
-    var statechange=function(arrIndex) {
-      return function() {
-        if(xhrArray[arrIndex].readyState===4) {
-          FactItemResponse(arrIndex,resultArray,xhrArray);
-          FactAllResponses(resultArray,xhrArray,numQuotes,callback);
-        }
+  var statechange=function(arrIndex) {
+    return function() {
+      if(xhrArray[arrIndex].readyState===4) {
+        FactItemResponse(arrIndex,resultArray,xhrArray);
+        FactAllResponses(resultArray,xhrArray,numQuotes,callback);
       }
     }
+  }
 
-    for(var i=0; i<numQuotes; i++) {
-	  var xhr = new XMLHttpRequest();
-      xhrArray[i]=xhr;
-      xhr.open("GET", "https://numbersapi.p.mashape.com/random", true);
-      xhr.setRequestHeader("X-Mashape-Key","12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
-      xhr.setRequestHeader("Accept", "text/plain");
-      xhrArray[i].onreadystatechange=statechange(i);
-      xhrArray[i].send();
-    }
+  for(var i=0; i<numQuotes; i++) {
+    var xhr = new XMLHttpRequest();
+    xhrArray[i]=xhr;
+    xhr.open("GET", "https://numbersapi.p.mashape.com/random", true);
+    xhr.setRequestHeader("X-Mashape-Key","12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
+    xhr.setRequestHeader("Accept", "text/plain");
+    xhrArray[i].onreadystatechange=statechange(i);
+    xhrArray[i].send();
+  }
 }
 
 function FactItemResponse(idx,resultArray,xhrArray) {
   if(xhrArray[idx].status===200) {
-	    var xhr = xhrArray[idx];
-		resultArray[idx] = '<p>'+xhr.responseText+'</p><hr>';
-   }
+    var xhr = xhrArray[idx];
+    resultArray[idx] = '<p>'+xhr.responseText+'</p><hr>';
+  }
 }
 
 function FactAllResponses(resultArray,xhrArray,num,callback) {
   var i,isAllComplete=true,isAllCompleteSucc=true;
-   for(i=0;i<num;i++) if((!xhrArray[i])||(xhrArray[i].readyState!==4)) {
-     isAllComplete=false;
-     break;
-   }
-   if(isAllComplete) {
-	 var text = textPrefix;
-   	 text += '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
-     for(i=0;i<resultArray.length;i++){
-		 if(xhrArray[i].status==200) {
-       		text += resultArray[i];
-		 }
-		 else{
-			text += "<p>"+statusText+"</p><hr>";
-		 }
-     }
-	 text += "</div></div>";
-     callback(text);
-   }
+  for(i=0;i<num;i++) if((!xhrArray[i])||(xhrArray[i].readyState!==4)) {
+    isAllComplete=false;
+    break;
+  }
+  if(isAllComplete) {
+    var text = textPrefix;
+    text += '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    for(i=0;i<resultArray.length;i++){
+      if(xhrArray[i].status==200) {
+       	text += resultArray[i];
+      }
+      else{
+	text += "<p>"+statusText+"</p><hr>";
+      }
+    }
+    text += "</div></div>";
+    callback(text);
+  }
 }
 //facts end
 
@@ -203,7 +224,7 @@ function createPhotoList(responseArray, callback) {
   for (i=0; i<photosArray.length;i++) {
     var photo = photosArray[i];
     var imgSrc = 'https://farm' + photo.farm + '.staticflickr.com/' + photo.server
-    + '/' + photo.id + '_' + photo.secret + '.jpg';
+      + '/' + photo.id + '_' + photo.secret + '.jpg';
     text += '<li><img src=' + imgSrc + ' alt=""></li>';
   }
   text += '</ul></div></div>';
@@ -249,62 +270,51 @@ function getWiki(topic, data, callback, accum, callback2) {
       data2 = jQuery.parseJSON(xhr.responseText.substring(5, xhr.responseText.length-1));
       thing = data2.query.pages;
       for (var key in thing) {
-       if (key < 0) {
-         callback(data, accum, callback2);
-         return;
-       }
-       thing2 = thing[key].extract;
-     }
-     if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
-       callback(data, accum+"<p>"+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a></p><hr><br /><br />", callback2);
-     } else {
-       callback(data, accum, callback2);
-     }
-   }
- }
- xhr.send();
+	if (key < 0) {
+          callback(data, accum, callback2);
+          return;
+	}
+	thing2 = thing[key].extract;
+      }
+      if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
+	callback(data, accum+"<p>"+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a></p><hr><br /><br />", callback2);
+      } else {
+	callback(data, accum, callback2);
+      }
+    }
+  }
+  xhr.send();
 }
 
 function twitterContent(handle, callback){
-	if (handle.substring(0,1) === '@'){
-		handle = handle.substring(1,handle.length);
-	}
-	var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://www.twitter.com/"+handle, true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-        // innerText does not let the attacker inject HTML elements.
-		var response = xhr.responseText;
-		var tweetsStart = response.search('<div class="GridTimeline">');
-		var tweetsEnd = response.search('<div id="scroll-bump-dialog" class="ScrollBumpDialog modal-container">');
-		var tweets = response.substring(tweetsStart, tweetsEnd);
-        tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css"><style>@charset "utf-8";body {}'+
-'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
-'#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}'+
-'#commentreplacement p p2 {font-weight: bold;}'+
-'#commentreplacement p p3 {font-style: italic;}'+
-'#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
-'#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
-'#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
-'#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
-'#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
-'#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
-'#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>'+'<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
-		callback(tweetText);
-      }
+  if (handle.substring(0,1) === '@'){
+    handle = handle.substring(1,handle.length);
+  }
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.twitter.com/"+handle, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      // innerText does not let the attacker inject HTML elements.
+      var response = xhr.responseText;
+      var tweetsStart = response.search('<div class="GridTimeline">');
+      var tweetsEnd = response.search('<div id="scroll-bump-dialog" class="ScrollBumpDialog modal-container">');
+      var tweets = response.substring(tweetsStart, tweetsEnd);
+      tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>CommentHider: Tweets</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
+      callback(tweetText);
+    }
   }
   xhr.send();
 }
 
 var textPrefix = '<style>@charset "utf-8";body {}'+
-'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
-'#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 200%;text-align: center;}'+
-'#commentreplacement p p2 {font-weight: bold;}'+
-'#commentreplacement p p3 {font-style: italic;}'+
-'#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
-'#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
-'#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
-'#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
-'#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
-'#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
-'#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
+  '#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
+  '#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;text-align: center;}'+
+  '#commentreplacement p p2 {font-weight: bold;}'+
+  '#commentreplacement p p3 {font-style: italic;}'+
+  '#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
+  '#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
+  '#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
+  '#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
+  '#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
+  '#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
+  '#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
