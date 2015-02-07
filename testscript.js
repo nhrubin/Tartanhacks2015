@@ -97,7 +97,7 @@ function AllResponses(resultArray,xhrArray,num,callback) {
    }
    if(isAllComplete) {
 	 var text = '<style>@charset "utf-8";body {}'+
-'#commentreplacement {width: 100%;overflow: scroll;max-height: 400px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
+'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
 '#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}'+
 '#commentreplacement p p2 {font-weight: bold;}'+
 '#commentreplacement p p3 {font-style: italic;}'+
@@ -107,7 +107,6 @@ function AllResponses(resultArray,xhrArray,num,callback) {
 '#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
 '#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
 '#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
-'#commentfillerphotolist li a p {margin: 0;padding: 5%;font-size: 0.75em;color: #bdc3c7;}'+
 '#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
    	 text += '<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
      for(i=0;i<resultArray.length;i++){
@@ -122,20 +121,76 @@ function AllResponses(resultArray,xhrArray,num,callback) {
      callback(text);
    }
 }
+//end quotes
 
+//facts start
 function factsContent(callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "https://numbersapi.p.mashape.com/random", true);
-  xhr.setRequestHeader("X-Mashape-Key","12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
-  xhr.setRequestHeader("Accept", "text/plain");
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      callback('<div><p>'+xhr.responseText+'</p></div>');
+  	var xhrArray=[];
+    var resultArray=[];
+	var numQuotes = 20;
+
+    var statechange=function(arrIndex) {
+      return function() {
+        if(xhrArray[arrIndex].readyState===4) {
+          FactItemResponse(arrIndex,resultArray,xhrArray);
+          FactAllResponses(resultArray,xhrArray,numQuotes,callback);
+        }
+      }
     }
-  }
-  xhr.send();
+
+    for(var i=0; i<numQuotes; i++) {
+	  var xhr = new XMLHttpRequest();
+      xhrArray[i]=xhr;
+      xhr.open("GET", "https://numbersapi.p.mashape.com/random", true);
+      xhr.setRequestHeader("X-Mashape-Key","12jk2SC0fumshzKBfoL1b80sFHuAp1zVJrHjsnpXTrIJDFEd3u");
+      xhr.setRequestHeader("Accept", "text/plain");
+      xhrArray[i].onreadystatechange=statechange(i);
+      xhrArray[i].send();
+    }
 }
 
+function FactItemResponse(idx,resultArray,xhrArray) {
+  if(xhrArray[idx].status===200) {
+	    var xhr = xhrArray[idx];
+		resultArray[idx] = '<p>'+xhr.responseText+'</p><hr>';
+   }
+}
+
+function FactAllResponses(resultArray,xhrArray,num,callback) {
+  var i,isAllComplete=true,isAllCompleteSucc=true;
+   for(i=0;i<num;i++) if((!xhrArray[i])||(xhrArray[i].readyState!==4)) {
+     isAllComplete=false;
+     break;
+   }
+   if(isAllComplete) {
+	 var text = '<style>@charset "utf-8";body {}'+
+'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
+'#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}'+
+'#commentreplacement p p2 {font-weight: bold;}'+
+'#commentreplacement p p3 {font-style: italic;}'+
+'#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
+'#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
+'#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
+'#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
+'#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
+'#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
+'#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
+   	 text += '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+     for(i=0;i<resultArray.length;i++){
+		 if(xhrArray[i].status==200) {
+       		text += resultArray[i];
+		 }
+		 else{
+			text += "<p>"+statusText+"</p>";
+		 }
+     }
+	 text += "</div></div>";
+     callback(text);
+   }
+}
+//facts end
+
+//flickr start
 function flickrContent(keyword, callback) {
   var flickrAPI = "";
   flickrAPI += "https://api.flickr.com/services/rest/?";
@@ -161,18 +216,31 @@ function flickrContent(keyword, callback) {
 }
 
 function createPhotoList(responseArray, callback) {
+  var text = '<style>@charset "utf-8";body {}'+
+'#commentreplacement {width: 100%;overflow: scroll;max-height: 600px;background-color: #FFFFFF;-webkit-box-shadow: 3px 3px #606060;box-shadow: 3px 3px #606060;border-radius: 0px 10px 10px;border: medium solid #9F9F9F;}'+
+'#commentreplacement p {border-bottom-color: #A3A3A3;border-top-color: #A3A3A3;padding-left: 10px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;font-size: medium;line-height: 400%;text-align: center;}'+
+'#commentreplacement p p2 {font-weight: bold;}'+
+'#commentreplacement p p3 {font-style: italic;}'+
+'#commentreplacement #commentReplacementItems {padding-top: 5px;padding-bottom: 5px;padding-left: 5px;padding-right: 5px;}'+
+'#commentreplacement #commentReplacementItems h2 {display: inline-table;text-align: center;width: 100%;border-bottom-style: solid;margin-top: 0px;margin-bottom: 0px;line-height: 200%;border-bottom-color: #696969;}'+
+'#commentReplacementHeader p {background-color: #FFFFFF;width: 30%;height: 100%;margin-top: 0px;margin-bottom: 0px;padding-top: 0px;padding-bottom: 0px;line-height: 300%;font-weight: bold;font-size: medium;text-align: center;border-top-left-radius: 10px;border-top-right-radius: 10px;border-color: #9F9F9F;border-left-style: solid;border-right-style: solid;border-top-style: solid;border-left-width: medium;border-right-width: medium;border-top-width: medium;}'+
+'#commentfillerphotolist {margin: 0;padding: 0;list-style: none;}'+
+'#commentfillerphotolist li {float: left;width: 45%;margin: 2.5%;}'+
+'#commentfillerphotolist li img {width: 90%;margin-left: 5%;margin-right: 5%;}'+
+'#commentreplacement #commentReplacementItems hr {width: 100%;color: #a9a9a9;background-color: #a9a9a9;height: 1px;}</style>';
+   	 text += '<div id="commentReplacementHeader"><p>CommentHider: Flickr</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
   var photosArray = responseArray.photos.photo;
-  var text = '<div id="wrapper"><section><ul id="projects">';
+  text += '<ul id="commentfillerphotolist">';
   for (i=0; i<photosArray.length;i++) {
     var photo = photosArray[i];
     var imgSrc = 'https://farm' + photo.farm + '.staticflickr.com/' + photo.server
     + '/' + photo.id + '_' + photo.secret + '.jpg';
     text += '<li><img src=' + imgSrc + ' alt=""></li>';
   }
-  text += '</ul></section>'
+  text += '</ul></div></div>';
   callback(text);
 }
-
+//flickr end
 
 
 function wikiContent(callback) {
