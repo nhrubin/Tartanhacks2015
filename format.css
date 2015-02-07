@@ -1,0 +1,13 @@
+@charset "utf-8";
+body {
+	background-color: #BCBCBC;
+}
+#contentreplacement {
+	width: 100%;
+	background-color: #FFFFFF;
+}
+#contentreplacement p {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
