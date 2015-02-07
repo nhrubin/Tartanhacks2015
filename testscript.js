@@ -101,7 +101,7 @@ function AllResponses(resultArray,xhrArray,num,callback) {
   }
   if(isAllComplete) {
     var text = textPrefix;
-    text += '<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    text += '<div id="commentReplacementHeader"><p>NoComment: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
     for(i=0;i<resultArray.length;i++){
       if(xhrArray[i].status==200) {
        	text += resultArray[i];
@@ -128,7 +128,7 @@ function catContent(callback) {
       for (var i in facts) {
 	text = text + "<p>"+facts[i]+"</p><hr>";
       }
-      callback(textPrefix + '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + text + "</div></div>");
+      callback(textPrefix + '<div id="commentReplacementHeader"><p>NoComment: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + text + "</div></div>");
     }
   }
   xhr.send();
@@ -176,7 +176,7 @@ function FactAllResponses(resultArray,xhrArray,num,callback) {
   }
   if(isAllComplete) {
     var text = textPrefix;
-    text += '<div id="commentReplacementHeader"><p>CommentHider: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+    text += '<div id="commentReplacementHeader"><p>NoComment: Facts</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
     for(i=0;i<resultArray.length;i++){
       if(xhrArray[i].status==200) {
        	text += resultArray[i];
@@ -218,7 +218,7 @@ function flickrContent(keyword, callback) {
 
 function createPhotoList(responseArray, callback) {
   var text = textPrefix;
-  text += '<div id="commentReplacementHeader"><p>CommentHider: Flickr</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
+  text += '<div id="commentReplacementHeader"><p>NoComment: Flickr</p></div><div id="commentreplacement"><div id="commentReplacementItems">';
   var photosArray = responseArray.photos.photo;
   text += '<ul id="commentfillerphotolist">';
   for (i=0; i<photosArray.length;i++) {
@@ -251,7 +251,7 @@ function intermediate(data, callback) {
 
 function processData(data, accum, callback) {
   if (data.length == 0) {
-    text = textPrefix + '<div id="commentReplacementHeader"><p>CommentHider: Wiki</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + accum + "</div></div>";
+    text = textPrefix + '<div id="commentReplacementHeader"><p>NoComment: Wiki</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + accum + "</div></div>";
     callback(text);
     return;
   }
@@ -299,7 +299,7 @@ function twitterContent(handle, callback){
       var tweetsStart = response.search('<div class="GridTimeline">');
       var tweetsEnd = response.search('<div id="scroll-bump-dialog" class="ScrollBumpDialog modal-container">');
       var tweets = response.substring(tweetsStart, tweetsEnd);
-      tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>CommentHider: Tweets</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
+      tweetText = '<link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_core.bundle.css"><link rel="stylesheet" href="https://abs.twimg.com/a/1423152059/css/t1/twitter_logged_out.bundle.css">'+textPrefix+'<div id="commentReplacementHeader"><p>NoComment: Tweets</p></div><div id="commentreplacement"><div id="commentReplacementItems">'+tweets+'</div></div>';
       callback(tweetText);
     }
   }
