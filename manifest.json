@@ -4,6 +4,12 @@
   "name": "Hide comments",
   "description": "This extension hides comments and lets you choose what to replace them with",
   "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["jquery-2.1.1.min.js", "testscript.js"]
+    }
+  ],
 
   "browser_action": {
     "default_icon": "icon.png",
