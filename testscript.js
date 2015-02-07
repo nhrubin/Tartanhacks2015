@@ -1,6 +1,5 @@
 $(document).ready(function() {
-  console.log('here');
-  contentToUse = 'facts';
+  contentToUse = 'wiki';
   if (contentToUse == 'wiki') {
     wikiContent(replaceContents);
   } else if (contentToUse == 'facts') {
@@ -13,7 +12,6 @@ function replaceContents(newContents) {
   $(".Contributions").replaceWith("");
   first = true;
   $("div").each(function() {
-    console.log("looking for things to replace");
     var regex = /(comment|disqus)+/i;
     if (this.id.match(regex) || this.className.match(regex)) {
       if($(this).length > 0) {
@@ -44,7 +42,6 @@ function factsContent(callback) {
 function wikiContent(callback) {
   var xhr = new XMLHttpRequest();
   var curUrl = window.location.href;
-  console.log(curUrl);
   xhr.open("GET", "https://access.alchemyapi.com/calls/url/URLGetRankedNamedEntities?apikey=f9c7e68cc2f1b2f6725cb90dfeabb313288c3dff&url="+curUrl+"&outputMode=json&maxRetrieve=10", true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState == 4) {
@@ -78,6 +75,7 @@ function getWiki(topic, data, callback, accum, callback2) {
       data2 = jQuery.parseJSON(xhr.responseText.substring(5, xhr.responseText.length-1));
       thing = data2.query.pages;
       for (var key in thing) {
+	if (key < 0) callback(data, accum, callback2);
 	thing2 = thing[key].extract;
       }
       if (thing2.length > 50) {
