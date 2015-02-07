@@ -35,24 +35,28 @@ function restoreOptions() {
 }
 
 function misc() {
+  // select corresponding radio button when text box selected
   $("input[type=text]").click(function() {
     var name = $(this).attr('name');
     var source = name.split('_')
     $('input:radio[name="source"]').val([source[0]]);
   });
 
+  // focus corresponding text box when radio button selected
   $("input[type=radio]").click(function(){
-      var source = $(this).attr('value');
-      $('input[name=' + source + '_input]').focus();
+    var source = $(this).attr('value');
+    $('input[name=' + source + '_input]').focus();
   });
 
+  // clear text box when change to different option
   $("input[type=radio]").click(function(){
    $("input[type=text]").val('');
  }); 
 
-  $("input[type=text]").click(function() {
-    $("input[type=text]").val('');
-  });
+ // clear text box when chage to different option
+ $("input[type=text]").click(function() {
+  $("input[type=text]").val('');
+});
 }
 
 
