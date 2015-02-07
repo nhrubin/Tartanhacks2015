@@ -1,14 +1,21 @@
 $(document).ready(function() {
-  var replaceHTML = "<div>Hi</div>";
+  var replaceHTML = "<div>Hiabcde</div>";
   $("#watch-discussion").replaceWith(replaceHTML);
-  lastFound = null;
+  first = true;
   $("div").each(function() {
     var regex = /(comment|disqus)+/i;
     if (this.id.match(regex) || this.className.match(regex)) {
-      $(lastFound).replaceWith("");
-      lastFound = this;
-      console.log('matches: '+this.id+" "+this.className);
+      if($(this).length > 0) {
+	if (first) {
+	  first = false;
+	  $(this).replaceWith(replaceHTML);
+	} else {
+	  $(this).replaceWith("");
+	}
+	console.log('matches: '+this.id+" "+this.className);
+      } else {
+	console.log('here');
+      }
     }
   });
-  $(lastFound).replaceWith(replaceHTML);
 });
