@@ -251,7 +251,7 @@ function intermediate(data, callback) {
 
 function processData(data, accum, callback) {
   if (data.length == 0) {
-    text = textPrefix + '<div id="commentReplacementHeader"><p>CommentHider: Quotes</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + accum + "</div></div>";
+    text = textPrefix + '<div id="commentReplacementHeader"><p>CommentHider: Wiki</p></div><div id="commentreplacement"><div id="commentReplacementItems">' + accum + "</div></div>";
     callback(text);
     return;
   }
@@ -277,7 +277,7 @@ function getWiki(topic, data, callback, accum, callback2) {
 	thing2 = thing[key].extract;
       }
       if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
-	callback(data, accum+"<p>"+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a></p><hr><br /><br />", callback2);
+	callback(data, accum+"<p>"+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a></p><hr>", callback2);
       } else {
 	callback(data, accum, callback2);
       }
