@@ -10,6 +10,8 @@ function setContent(source, input) {
     factsContent(replaceContents);
   } else if (contentToUse == 'quotes') {
     quotesContent(replaceContents);
+  } else if (contentToUse == 'flickr') {
+    flickrContent(input, replaceContents);
   }
 }
 
@@ -33,15 +35,15 @@ function replaceContents(newContents) {
     var regex = /(comment|disqus)+/i;
     if (this.id.match(regex) || this.className.match(regex)) {
       if($(this).length > 0) {
-	if (first) {
-	  first = false;
-	  $(this).replaceWith(newContents);
-	} else {
-	  $(this).replaceWith("");
-	}
-      }
-    }
-  });
+       if (first) {
+         first = false;
+         $(this).replaceWith(newContents);
+       } else {
+         $(this).replaceWith("");
+       }
+     }
+   }
+ });
 }
 
 function quotesContent(callback) {
@@ -96,15 +98,15 @@ function AllResponses(resultArray,xhrArray,num,callback) {
     var text = '<div id="contentreplacement">';
     for(i=0;i<resultArray.length;i++){
       if(xhrArray[i].status==200) {
-       	text += resultArray[i];
+        text += resultArray[i];
       }
       else{
-	text += "<p>"+statusText+"</p>";
-      }
-    }
-    text += "</div>";
-    callback(text);
-  }
+       text += "<p>"+statusText+"</p>";
+     }
+   }
+   text += "</div>";
+   callback(text);
+ }
 }
 
 function factsContent(callback) {
@@ -119,6 +121,45 @@ function factsContent(callback) {
   }
   xhr.send();
 }
+
+function flickrContent(keyword, callback) {
+  var flickrAPI = "";
+  flickrAPI += "https://api.flickr.com/services/rest/?";
+  flickrAPI += "&method=flickr.photos.search";
+  flickrAPI += "&api_key=44102463fa0ebbb239525d05370047b7";
+  flickrAPI += "&text=" + keyword;
+  flickrAPI += "&privacy_filter=1&accuracy=1&safe_search=1&content_type=1&media=photos&geo_context=0";
+  flickrAPI += "&per_page=10"
+  flickrAPI += "&format=json";
+
+  flickrAPI += "&nojsoncallback=1";
+
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET",flickrAPI,true);   // 
+  xhr.send();
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState==4) {
+      var responseArray = JSON.parse(xhr.responseText);
+      createPhotoList(responseArray, callback);
+    }
+  }
+}
+
+function createPhotoList(responseArray, callback) {
+  var photosArray = responseArray.photos.photo;
+  var text = '<div id="wrapper"><section><ul id="projects">';
+  for (i=0; i<photosArray.length;i++) {
+    var photo = photosArray[i];
+    var imgSrc = 'https://farm' + photo.farm + '.staticflickr.com/' + photo.server
+    + '/' + photo.id + '_' + photo.secret + '.jpg';
+    text += '<li><img src=' + imgSrc + ' alt=""></li>';
+  }
+  text += '</ul></section>'
+  callback(text);
+}
+
+
 
 function wikiContent(callback) {
   var xhr = new XMLHttpRequest();
@@ -156,19 +197,19 @@ function getWiki(topic, data, callback, accum, callback2) {
       data2 = jQuery.parseJSON(xhr.responseText.substring(5, xhr.responseText.length-1));
       thing = data2.query.pages;
       for (var key in thing) {
-	if (key < 0) {
-	  callback(data, accum, callback2);
-	  return;
-	}
-	thing2 = thing[key].extract;
-      }
-      if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
-	callback(data, accum+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a><br /><br />", callback2);
-      } else {
-	callback(data, accum, callback2);
-      }
-    }
-  }
-  xhr.send();
+       if (key < 0) {
+         callback(data, accum, callback2);
+         return;
+       }
+       thing2 = thing[key].extract;
+     }
+     if (thing2.length > 50 && thing2.indexOf("This is a redirect") < 0) {
+       callback(data, accum+thing2+" <a href='http://en.wikipedia.org/wiki/"+encodeURI(topic)+"' target='_blank'>Read more</a><br /><br />", callback2);
+     } else {
+       callback(data, accum, callback2);
+     }
+   }
+ }
+ xhr.send();
 }
 
